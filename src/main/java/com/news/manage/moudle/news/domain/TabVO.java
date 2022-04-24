@@ -1,21 +1,12 @@
-package com.news.manage.moudle.news.repo.dao;
+package com.news.manage.moudle.news.domain;
 
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
-
-@Entity
-@Table(name = "NEWS_TAB")
-public class TabEntity extends BaseEntity{
-    @Column(name = "TAB_NAME")
+public class TabVO extends BaseVO{
     private String tabName;
-    @Column(name = "DESCRIPTION")
+
     private String description;
-    @Column(name = "AUTHOR_ID")
+
     private String authorId;
-    @Column(name = "AUTHOR_NAME")
+
     private String authorName;
 
     public String getTabName() {

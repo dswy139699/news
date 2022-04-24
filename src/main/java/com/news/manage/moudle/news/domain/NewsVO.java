@@ -2,25 +2,23 @@ package com.news.manage.moudle.news.domain;
 
 import com.news.manage.moudle.news.enums.StatusEnum;
 
-//新闻动态查询入参模型
-public class QueryModel {
+public class NewsVO extends BaseVO{
+
     //栏目id
     private String tabId;
     //栏目名称
     private String tabName;
-    //栏目描述
-    private String description;
-
+    //
+    private String title;
+    private String content;
     //作者id
     private String authorId;
-    //作者姓名
+    //
     private String authorName;
-    //新闻标题
-    private String title;
-    //新闻内容
-    private String content;
 
     private StatusEnum statusEnum;
+
+
 
     public String getTabId() {
         return tabId;
@@ -36,22 +34,6 @@ public class QueryModel {
 
     public void setTabName(String tabName) {
         this.tabName = tabName;
-    }
-
-    public String getAuthorId() {
-        return authorId;
-    }
-
-    public void setAuthorId(String authorId) {
-        this.authorId = authorId;
-    }
-
-    public String getAuthorName() {
-        return authorName;
-    }
-
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
     }
 
     public String getTitle() {
@@ -70,19 +52,27 @@ public class QueryModel {
         this.content = content;
     }
 
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
+    }
+
     public StatusEnum getStatusEnum() {
         return statusEnum;
     }
 
     public void setStatusEnum(StatusEnum statusEnum) {
         this.statusEnum = statusEnum;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 }
