@@ -93,6 +93,11 @@
             <version>${org.mapstruct.version}</version>
         </dependency>
 
+<!--        commons-lang-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
 <!--        log4j-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

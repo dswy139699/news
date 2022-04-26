@@ -1,5 +1,7 @@
 package com.news.manage.moudle.news.domain;
 
+import com.news.manage.moudle.news.enums.StatusEnum;
+
 import java.io.Serializable;
 
 public class BaseVO implements Serializable {
@@ -9,6 +11,17 @@ public class BaseVO implements Serializable {
     private String createTime;
     //更新时间
     private String updateTime;
+    private StatusEnum statusEnum;
+
+    public StatusEnum getStatusEnum() {
+        return statusEnum;
+    }
+
+    public void setStatusEnum(StatusEnum statusEnum) {
+        this.statusEnum = statusEnum;
+    }
+
+
 
     public String getUuid() {
         return uuid;

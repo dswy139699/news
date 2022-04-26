@@ -7,9 +7,9 @@ import com.news.manage.moudle.news.domain.UserVO;
 import com.news.manage.moudle.news.enums.ErrorEnum;
 import com.news.manage.moudle.news.repo.dao.UserEntity;
 import com.news.manage.moudle.news.repo.mapper.UserRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -40,7 +40,7 @@ public class UserService {
         if(Objects.nonNull(userId)){
             return queryUserById(userId);
         }
-        return new UserVO();
+        return null;
     }
 
     /**
@@ -95,15 +95,15 @@ public class UserService {
 
         Specification<UserEntity> specification = (Root<UserEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
             List<Predicate> pList = new ArrayList<>();
-            if(Objects.nonNull(userVO.getUserId())){
+            if(StringUtils.isNotEmpty(userVO.getUserId())){
                 Predicate predicate = cb.equal(root.get(USER_ID), userVO.getUserId());
                 pList.add(predicate);
             }
-            if(Objects.nonNull(userVO.getName())){
+            if(StringUtils.isNotEmpty(userVO.getName())){
                 Predicate predicate = cb.like(root.get(USER_NAME), userVO.getName());
                 pList.add(predicate);
             }
-            if(Objects.nonNull(userVO.getUuid())){
+            if(StringUtils.isNotEmpty(userVO.getUuid())){
                 Predicate predicate = cb.equal(root.get(UUID), userVO.getUuid());
                 pList.add(predicate);
             }

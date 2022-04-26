@@ -9,7 +9,6 @@ public class UserVO extends BaseVO{
     private String level;
     private String exp;
     private String photoAddress;
-    private StatusEnum statusEnum;
 
 
     public String getUserId() {
@@ -60,11 +59,4 @@ public class UserVO extends BaseVO{
         this.photoAddress = photoAddress;
     }
 
-    public StatusEnum getStatusEnum() {
-        return statusEnum;
-    }
-
-    public void setStatusEnum(StatusEnum statusEnum) {
-        this.statusEnum = statusEnum;
-    }
 }

@@ -16,8 +16,6 @@ public class NewsVO extends BaseVO{
     //
     private String authorName;
 
-    private StatusEnum statusEnum;
-
 
 
     public String getTabId() {
@@ -68,11 +66,4 @@ public class NewsVO extends BaseVO{
         this.authorName = authorName;
     }
 
-    public StatusEnum getStatusEnum() {
-        return statusEnum;
-    }
-
-    public void setStatusEnum(StatusEnum statusEnum) {
-        this.statusEnum = statusEnum;
-    }
 }

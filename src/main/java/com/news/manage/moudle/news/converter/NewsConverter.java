@@ -1,8 +1,10 @@
 package com.news.manage.moudle.news.converter;
 
+import com.news.manage.moudle.news.domain.CommentVO;
 import com.news.manage.moudle.news.domain.NewsVO;
 import com.news.manage.moudle.news.domain.TabVO;
 import com.news.manage.moudle.news.domain.UserVO;
+import com.news.manage.moudle.news.repo.dao.CommentEntity;
 import com.news.manage.moudle.news.repo.dao.NewsEntity;
 import com.news.manage.moudle.news.repo.dao.TabEntity;
 import com.news.manage.moudle.news.repo.dao.UserEntity;
@@ -52,4 +54,11 @@ public interface NewsConverter {
     TabVO toTabVO(TabEntity tabEntity);
     TabEntity toTabEntity(TabVO tabVO);
     List<TabVO> toTabVOList(List<TabEntity> tabEntityList);
+
+    /**
+     * comment转换
+     */
+    CommentVO toCommentVO(CommentEntity commentEntity);
+    CommentEntity toCommentEntity(CommentVO commentVO);
+    List<CommentVO> toCommentVOList(List<CommentEntity> commentEntityList);
 }
