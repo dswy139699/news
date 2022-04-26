@@ -341,7 +341,7 @@ public class NewsService {
         String currentName = java.util.UUID.randomUUID().toString();
         String currentFilePath = NewsConstant.IP_ADDRESS + NewsConstant.FILE_PATH + currentName + fileType;
         FileEntity fileEntity = new FileEntity(fileName, fileType, currentName, currentFilePath);
-        File localFile = new File(NewsConstant.FILE_PATH + currentName);
+        File localFile = new File(NewsConstant.FILE_PATH + currentName + fileType);
         try {
             file.transferTo(localFile); //把上传的文件保存至本地
             fIleRepository.save(fileEntity);
