@@ -339,7 +339,7 @@ public class NewsService {
         String fileType = fileName.substring(fileName.lastIndexOf("."));
 //        String fileType = file.getContentType();
         String currentName = java.util.UUID.randomUUID().toString();
-        String currentFilePath = NewsConstant.IP_ADDRESS + NewsConstant.FILE_PATH + currentName + fileType;
+        String currentFilePath = NewsConstant.IP_ADDRESS + NewsConstant.FILE_LOAD + currentName + fileType;
         FileEntity fileEntity = new FileEntity(fileName, fileType, currentName, currentFilePath);
         File localFile = new File(NewsConstant.FILE_PATH + currentName + fileType);
         try {
