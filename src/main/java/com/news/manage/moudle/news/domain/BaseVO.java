@@ -11,7 +11,7 @@ public class BaseVO implements Serializable {
     private String createTime;
     //更新时间
     private String updateTime;
-    private StatusEnum statusEnum;
+    private StatusEnum statusEnum = StatusEnum.ACTIVE;
 
     public StatusEnum getStatusEnum() {
         return statusEnum;

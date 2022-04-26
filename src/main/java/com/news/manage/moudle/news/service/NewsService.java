@@ -5,6 +5,7 @@ import com.news.manage.moudle.news.controller.CommentResource;
 import com.news.manage.moudle.news.converter.NewsConverter;
 import com.news.manage.moudle.news.domain.*;
 import com.news.manage.moudle.news.enums.ErrorEnum;
+import com.news.manage.moudle.news.enums.StatusEnum;
 import com.news.manage.moudle.news.repo.dao.CommentEntity;
 import com.news.manage.moudle.news.repo.dao.NewsEntity;
 import com.news.manage.moudle.news.repo.dao.TabEntity;
@@ -14,6 +15,7 @@ import com.news.manage.moudle.news.repo.mapper.TabRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -70,7 +72,17 @@ public class NewsService {
             newsVO.setAuthorId(userVO.getUserId());
             newsVO.setAuthorName(userVO.getName());
         }
-        NewsEntity newsEntity = newsConverter.toNewEntity(newsVO);
+        NewsEntity newsEntity = null;
+        if(StringUtils.isNotEmpty(newsVO.getUuid()) && StatusEnum.DELETED.equals(newsVO.getStatusEnum())){
+            newsEntity = newsRepository.getById(newsVO.getUuid());
+            newsEntity.setStatusEnum(StatusEnum.DELETED);
+        } else {
+            newsEntity = newsConverter.toNewEntity(newsVO);
+        }
+        if(StringUtils.isNotEmpty(newsEntity.getTabId())){
+            TabEntity tabEntity = tabRepository.getById(newsEntity.getTabId());
+            newsEntity.setTabName(tabEntity.getTabName());
+        }
         newsRepository.save(newsEntity);
     }
 
@@ -79,14 +91,18 @@ public class NewsService {
      * @param tabVO
      */
     public void manageTab(TabVO tabVO){
-        if(Objects.isNull(tabVO.getTabName()))
-            return;
         UserVO userVO = userService.queryUserByToken();
         if(Objects.nonNull(userVO)) {
             tabVO.setAuthorId(userVO.getUserId());
             tabVO.setAuthorName(userVO.getName());
         }
-        TabEntity tabEntity = newsConverter.toTabEntity(tabVO);
+        TabEntity tabEntity = null;
+        if(StringUtils.isNotEmpty(tabVO.getUuid()) && StatusEnum.DELETED.equals(tabVO.getStatusEnum())){
+            tabEntity = tabRepository.getById(tabVO.getUuid());
+            tabEntity.setStatusEnum(StatusEnum.DELETED);
+        } else {
+            tabEntity = newsConverter.toTabEntity(tabVO);
+        }
         tabRepository.save(tabEntity);
     }
 
@@ -95,14 +111,18 @@ public class NewsService {
      * @param commentVO
      */
     public void manageComment(CommentVO commentVO){
-        if(Objects.isNull(commentVO.getCommentBody()))
-            return;
         UserVO userVO = userService.queryUserByToken();
         if(Objects.nonNull(userVO)) {
             commentVO.setAuthorId(userVO.getUserId());
             commentVO.setAuthorName(userVO.getName());
         }
-        CommentEntity commentEntity = newsConverter.toCommentEntity(commentVO);
+        CommentEntity commentEntity = null;
+        if(StringUtils.isNotEmpty(commentVO.getUuid()) && StatusEnum.DELETED.equals(commentVO.getStatusEnum())){
+            commentEntity = commentRepository.getById(commentVO.getUuid());
+            commentEntity.setStatusEnum(StatusEnum.DELETED);
+        } else {
+            commentEntity = newsConverter.toCommentEntity(commentVO);
+        }
         commentRepository.save(commentEntity);
     }
 
@@ -149,6 +169,14 @@ public class NewsService {
     public ResponseModel<List<NewsVO>> queryNewsVOList(QueryModel queryModel){
         List<NewsEntity> newsEntities = this.queryNewsList(queryModel);
         List<NewsVO> newsVOS = newsConverter.toNewsVOList(newsEntities);
+        newsVOS.forEach(t -> {
+            QueryModel queryModelTab = new QueryModel();
+            queryModelTab.setTabId(t.getTabId());
+            List<TabEntity> tabVOS = queryTabList(queryModelTab);
+            if(!CollectionUtils.isEmpty(tabVOS)){
+                t.setTabName(tabVOS.get(0).getTabName());
+            }
+        });
         return new ResponseModel<>(ErrorEnum.SUCCESS.getCode(), ErrorEnum.SUCCESS.getMsg(), newsVOS);
     }
 

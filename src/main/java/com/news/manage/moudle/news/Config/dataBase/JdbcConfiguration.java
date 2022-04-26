@@ -34,6 +34,17 @@ public class JdbcConfiguration {
         dataSource.setPassword(password);
         dataSource.setUrl(url);
         dataSource.setDriverClassName(driverClassName);
+        dataSource.setAsyncInit(true);
+        dataSource.setInitialSize(5);
+        dataSource.setMaxActive(50);
+        dataSource.setMaxWait(60000);
+        dataSource.setPoolPreparedStatements(false);
+        dataSource.setMaxPoolPreparedStatementPerConnectionSize(-1);
+        dataSource.setValidationQuery("select 1 from dual");
+        dataSource.setTestWhileIdle(true);
+        dataSource.setTestOnBorrow(false);
+        dataSource.setTestOnReturn(false);
+        dataSource.setKeepAlive(false);
         return dataSource;
     }
 }

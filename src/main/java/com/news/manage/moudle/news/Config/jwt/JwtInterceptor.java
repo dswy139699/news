@@ -1,11 +1,18 @@
 package com.news.manage.moudle.news.Config.jwt;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class JwtInterceptor implements HandlerInterceptor {
 
@@ -30,9 +37,23 @@ public class JwtInterceptor implements HandlerInterceptor {
                     throw new RuntimeException("无 token ，请重新登陆");
                 }
                 JwtUtil.checkSign(token);
+                Authentication authentication = null;
+                if(Objects.nonNull(token) && !"".equals(token) && JwtUtil.checkSign(token)){
+                    authentication = generateAuthentication(token);
+                }
+                if(Objects.nonNull(authentication)){
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
                 return true;
             }
         }
         return true;
+    }
+
+    private Authentication generateAuthentication(String token){
+        String userId = JwtUtil.getUserId(token);
+        List<SimpleGrantedAuthority> grantedAuthorityList = new ArrayList<>();
+        grantedAuthorityList.add(new SimpleGrantedAuthority("admin"));
+        return new UsernamePasswordAuthenticationToken(userId, token, grantedAuthorityList);
     }
 }

@@ -6,14 +6,54 @@ import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.ArrayList;
 import java.util.List;
-
+//
+//@Configuration
+//@EnableWebSecurity
+//@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+//public class JwtConfig extends WebSecurityConfigurerAdapter{
+//
+////    @Bean
+////    @Override
+////    public AuthenticationManager authenticationManagerBean() throws Exception{
+////        return super.authenticationManagerBean();
+////    }
+////
+////    @Bean
+////    public PasswordEncoder passwordEncoder(){
+////        return NoOpPasswordEncoder.getInstance();
+////    }
+//
+//    @Override
+//    public void configure(WebSecurity web) {
+//        //解决静态资源被拦截的问题
+//        web.ignoring().antMatchers("/**");
+//    }
+//
+//    @Override
+//    protected void configure(HttpSecurity http)throws Exception{
+//        http.authorizeRequests()
+//                .anyRequest().authenticated();
+//    }
+//
+//}
+//
 
 @Configuration
 public class JwtConfig implements WebMvcConfigurer {
@@ -23,7 +63,7 @@ public class JwtConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor())
-                .addPathPatterns("/**");
+                .excludePathPatterns("/auth/login");
     }
 
     /**
@@ -37,7 +77,8 @@ public class JwtConfig implements WebMvcConfigurer {
     @Bean
     public HttpMessageConverters fastJsonHttpMessageConverters() {
         // 1.定义一个converters转换消息的对象
-        FastJsonHttpMessageConverter fastConverter = new FastJsonHttpMessageConverter();        // 2.添加fastjson的配置信息，比如: 是否需要格式化返回的json数据
+        FastJsonHttpMessageConverter fastConverter = new FastJsonHttpMessageConverter();
+        // 2.添加fastjson的配置信息，比如: 是否需要格式化返回的json数据
         FastJsonConfig fastJsonConfig = new FastJsonConfig();
         fastJsonConfig.setSerializerFeatures(SerializerFeature.PrettyFormat);
         // 3.在converter中添加配置信息

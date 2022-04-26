@@ -20,7 +20,7 @@ public class QueryModel {
     //新闻内容
     private String content;
 
-    private StatusEnum statusEnum;
+    private StatusEnum statusEnum = StatusEnum.ACTIVE;
 
     public String getTabId() {
         return tabId;
