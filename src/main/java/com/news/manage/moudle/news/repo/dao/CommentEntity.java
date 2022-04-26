@@ -11,11 +11,14 @@ import javax.persistence.Table;
 public class CommentEntity extends BaseEntity{
     @Column(name = "NEWS_ID")
     private String newsId;
+    @Column(name = "LINKED_AUTHOR_ID")
+    private String linkedAuthorId;
+    @Column(name = "LINKED_AUTHOR_NAME")
+    private String linkedAuthorName;
     @Column(name = "LINKED_COMMENT_ID")
     private String linkedCommentId;
     @Column(name = "COMMENT_BODY")
     private String commentBody;
-
     @Column(name = "AUTHOR_ID")
     private String authorId;
     @Column(name = "AUTHOR_NAME")
@@ -61,5 +64,19 @@ public class CommentEntity extends BaseEntity{
         this.commentBody = commentBody;
     }
 
+    public String getLinkedAuthorId() {
+        return linkedAuthorId;
+    }
 
+    public void setLinkedAuthorId(String linkedAuthorId) {
+        this.linkedAuthorId = linkedAuthorId;
+    }
+
+    public String getLinkedAuthorName() {
+        return linkedAuthorName;
+    }
+
+    public void setLinkedAuthorName(String linkedAuthorName) {
+        this.linkedAuthorName = linkedAuthorName;
+    }
 }

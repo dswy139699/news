@@ -24,9 +24,9 @@ public class CommentResource {
 
     @CheckToken
     @PostMapping(value = "/manage")
-    public ResponseModel<String> commentManage(@RequestBody CommentVO commentVO){
-        newsService.manageComment(commentVO);
-        return new ResponseModel<>(ErrorEnum.SUCCESS.getCode(), ErrorEnum.SUCCESS.getMsg(), "");
+    public ResponseModel<CommentVO> commentManage(@RequestBody CommentVO commentVO){
+        CommentVO commentVO1 = newsService.manageComment(commentVO);
+        return new ResponseModel<>(ErrorEnum.SUCCESS.getCode(), ErrorEnum.SUCCESS.getMsg(), commentVO1);
     }
 
     @CheckToken

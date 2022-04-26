@@ -31,8 +31,8 @@ public class TabResource {
     @PostMapping(value = "/manage")
     public ResponseModel tabManage(@RequestBody TabVO tabVO){
         logger.info("manage tab input: " + JSON.toJSONString(tabVO));
-        newsService.manageTab(tabVO);
-        return new ResponseModel(ErrorEnum.SUCCESS.getCode(), ErrorEnum.SUCCESS.getMsg(), "");
+        TabVO tabVO1 = newsService.manageTab(tabVO);
+        return new ResponseModel(ErrorEnum.SUCCESS.getCode(), ErrorEnum.SUCCESS.getMsg(), tabVO1);
     }
 
 

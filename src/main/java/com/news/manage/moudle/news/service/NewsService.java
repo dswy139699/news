@@ -1,29 +1,34 @@
 package com.news.manage.moudle.news.service;
 
 
-import com.news.manage.moudle.news.controller.CommentResource;
+import com.news.manage.moudle.news.constant.NewsConstant;
 import com.news.manage.moudle.news.converter.NewsConverter;
 import com.news.manage.moudle.news.domain.*;
 import com.news.manage.moudle.news.enums.ErrorEnum;
 import com.news.manage.moudle.news.enums.StatusEnum;
 import com.news.manage.moudle.news.repo.dao.CommentEntity;
+import com.news.manage.moudle.news.repo.dao.FileEntity;
 import com.news.manage.moudle.news.repo.dao.NewsEntity;
 import com.news.manage.moudle.news.repo.dao.TabEntity;
 import com.news.manage.moudle.news.repo.mapper.CommentRepository;
+import com.news.manage.moudle.news.repo.mapper.FIleRepository;
 import com.news.manage.moudle.news.repo.mapper.NewsRepository;
 import com.news.manage.moudle.news.repo.mapper.TabRepository;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 
 @Service
@@ -48,17 +53,20 @@ public class NewsService {
     private NewsRepository newsRepository;
     private TabRepository tabRepository;
     private CommentRepository commentRepository;
+    private FIleRepository fIleRepository;
     private UserService userService;
 
     NewsService(NewsConverter newsConverter,
                 NewsRepository newsRepository,
                 TabRepository tabRepository,
                 CommentRepository commentRepository,
+                FIleRepository fIleRepository,
                 UserService userService){
         this.newsConverter = newsConverter;
         this.newsRepository = newsRepository;
         this.tabRepository = tabRepository;
         this.commentRepository = commentRepository;
+        this.fIleRepository = fIleRepository;
         this.userService = userService;
     }
 
@@ -66,7 +74,7 @@ public class NewsService {
      * 新闻创建更新
      * @param newsVO
      */
-    public void manageNews(NewsVO newsVO){
+    public NewsVO manageNews(NewsVO newsVO){
         UserVO userVO = userService.queryUserByToken();
         if(Objects.nonNull(userVO)) {
             newsVO.setAuthorId(userVO.getUserId());
@@ -84,13 +92,14 @@ public class NewsService {
             newsEntity.setTabName(tabEntity.getTabName());
         }
         newsRepository.save(newsEntity);
+        return newsConverter.toNewsVO(newsEntity);
     }
 
     /**
      * 栏目创建更新
      * @param tabVO
      */
-    public void manageTab(TabVO tabVO){
+    public TabVO manageTab(TabVO tabVO){
         UserVO userVO = userService.queryUserByToken();
         if(Objects.nonNull(userVO)) {
             tabVO.setAuthorId(userVO.getUserId());
@@ -104,17 +113,23 @@ public class NewsService {
             tabEntity = newsConverter.toTabEntity(tabVO);
         }
         tabRepository.save(tabEntity);
+        return newsConverter.toTabVO(tabEntity);
     }
 
     /**
      * 评论创建更新
      * @param commentVO
      */
-    public void manageComment(CommentVO commentVO){
+    public CommentVO manageComment(CommentVO commentVO){
         UserVO userVO = userService.queryUserByToken();
         if(Objects.nonNull(userVO)) {
             commentVO.setAuthorId(userVO.getUserId());
             commentVO.setAuthorName(userVO.getName());
+        }
+        if(StringUtils.isNotEmpty(commentVO.getLinkedCommentId())){
+            CommentEntity commentEntity = commentRepository.getById(commentVO.getLinkedCommentId());
+            commentVO.setLinkedAuthorId(commentEntity.getAuthorId());
+            commentVO.setLinkedAuthorName(commentEntity.getAuthorName());
         }
         CommentEntity commentEntity = null;
         if(StringUtils.isNotEmpty(commentVO.getUuid()) && StatusEnum.DELETED.equals(commentVO.getStatusEnum())){
@@ -124,6 +139,7 @@ public class NewsService {
             commentEntity = newsConverter.toCommentEntity(commentVO);
         }
         commentRepository.save(commentEntity);
+        return newsConverter.toCommentVO(commentEntity);
     }
 
 
@@ -135,6 +151,10 @@ public class NewsService {
     public List<NewsEntity> queryNewsList(QueryModel queryModel){
         Specification<NewsEntity> specification = (Root<NewsEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
             List<Predicate> pList = new ArrayList<>();
+            if(StringUtils.isNotEmpty(queryModel.getUuid())){
+                Predicate predicate = cb.equal(root.get(UUID), queryModel.getUuid());
+                pList.add(predicate);
+            }
             if(StringUtils.isNotEmpty(queryModel.getAuthorId())){
                 Predicate predicate = cb.equal(root.get(AUTHOR_ID), queryModel.getAuthorId());
                 pList.add(predicate);
@@ -168,17 +188,59 @@ public class NewsService {
 
     public ResponseModel<List<NewsVO>> queryNewsVOList(QueryModel queryModel){
         List<NewsEntity> newsEntities = this.queryNewsList(queryModel);
+        if(StringUtils.isNotEmpty(queryModel.getUuid()) && !CollectionUtils.isEmpty(newsEntities)){
+            NewsEntity entity = newsEntities.get(0);
+            entity.setClickCount(entity.getClickCount() == null? 1 : entity.getClickCount()+1);
+            newsRepository.save(entity);
+        }
         List<NewsVO> newsVOS = newsConverter.toNewsVOList(newsEntities);
         newsVOS.forEach(t -> {
-            QueryModel queryModelTab = new QueryModel();
-            queryModelTab.setTabId(t.getTabId());
-            List<TabEntity> tabVOS = queryTabList(queryModelTab);
-            if(!CollectionUtils.isEmpty(tabVOS)){
-                t.setTabName(tabVOS.get(0).getTabName());
+            if (StringUtils.isEmpty(t.getTabName())){
+                QueryModel queryModelTab = new QueryModel();
+                queryModelTab.setTabId(t.getTabId());
+                List<TabEntity> tabVOS = queryTabList(queryModelTab);
+                if (!CollectionUtils.isEmpty(tabVOS)) {
+                    t.setTabName(tabVOS.get(0).getTabName());
+                }
             }
         });
         return new ResponseModel<>(ErrorEnum.SUCCESS.getCode(), ErrorEnum.SUCCESS.getMsg(), newsVOS);
     }
+
+
+    /**
+     * 查询热点新闻
+     * @return
+     */
+    public ResponseModel<List<NewsVO>> queryHotNews(){
+        Pageable pageable = PageRequest.of(0, 10);
+        List<NewsEntity> newsEntities = newsRepository.findAllByOrderByClickCountDesc(pageable);
+        List<NewsVO> newsVOS = newsConverter.toNewsVOList(newsEntities);
+        return new ResponseModel<>(ErrorEnum.SUCCESS.getCode(), ErrorEnum.SUCCESS.getMsg(), newsVOS);
+    }
+
+    /**
+     * 查询最新新闻
+     * @return
+     */
+    public ResponseModel<List<NewsVO>> queryNewNews(){
+        Pageable pageable = PageRequest.of(0, 10);
+        List<NewsEntity> newsEntities = newsRepository.findAllByOrderByCreateTimeDesc(pageable);
+        List<NewsVO> newsVOS = newsConverter.toNewsVOList(newsEntities);
+        return new ResponseModel<>(ErrorEnum.SUCCESS.getCode(), ErrorEnum.SUCCESS.getMsg(), newsVOS);
+    }
+
+    /**
+     * 查询推荐新闻
+     * @return
+     */
+    public ResponseModel<List<NewsVO>> queryRecommendNews(){
+        List<NewsEntity> newsEntities = newsRepository.findAllByRandom(10);
+        List<NewsVO> newsVOS = newsConverter.toNewsVOList(newsEntities);
+        return new ResponseModel<>(ErrorEnum.SUCCESS.getCode(), ErrorEnum.SUCCESS.getMsg(), newsVOS);
+    }
+
+
 
     /**
      * 根据条件查询tab
@@ -267,4 +329,26 @@ public class NewsService {
         return new ResponseModel<>(ErrorEnum.SUCCESS.getCode(), ErrorEnum.SUCCESS.getMsg(), commentVOS);
     }
 
+    /**
+     * 文件存储
+     * @param file
+     * @return
+     */
+    public ResponseModel<FileVO> uploadFile(MultipartFile file){
+        String fileName = file.getOriginalFilename();
+        String fileType = fileName.substring(fileName.lastIndexOf("."));
+//        String fileType = file.getContentType();
+        String currentName = java.util.UUID.randomUUID().toString();
+        String currentFilePath = NewsConstant.IP_ADDRESS + NewsConstant.FILE_PATH + currentName + fileType;
+        FileEntity fileEntity = new FileEntity(fileName, fileType, currentName, currentFilePath);
+        File localFile = new File(NewsConstant.FILE_PATH + currentName);
+        try {
+            file.transferTo(localFile); //把上传的文件保存至本地
+            fIleRepository.save(fileEntity);
+            return new ResponseModel<>(ErrorEnum.SUCCESS.getCode(), ErrorEnum.SUCCESS.getMsg(), newsConverter.toFileVO(fileEntity));
+        }catch (IOException e){
+            e.printStackTrace();
+            return new ResponseModel<>(ErrorEnum.FILE_SAVE_FAILED.getCode(), ErrorEnum.FILE_SAVE_FAILED.getMsg(), null);
+        }
+    }
 }

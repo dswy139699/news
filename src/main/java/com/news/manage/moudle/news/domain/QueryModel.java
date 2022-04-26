@@ -3,7 +3,7 @@ package com.news.manage.moudle.news.domain;
 import com.news.manage.moudle.news.enums.StatusEnum;
 
 //新闻动态查询入参模型
-public class QueryModel {
+public class QueryModel extends BaseVO{
     //栏目id
     private String tabId;
     //栏目名称

@@ -1,12 +1,12 @@
 package com.news.manage.moudle.news.domain;
 
-import javax.persistence.Column;
-
 public class CommentVO extends BaseVO{
 
 
     private String newsId;
     private String linkedCommentId;
+    private String linkedAuthorId;
+    private String linkedAuthorName;
     private String commentBody;
     private String authorId;
     private String authorName;
@@ -51,4 +51,19 @@ public class CommentVO extends BaseVO{
         this.authorName = authorName;
     }
 
+    public String getLinkedAuthorId() {
+        return linkedAuthorId;
+    }
+
+    public void setLinkedAuthorId(String linkedAuthorId) {
+        this.linkedAuthorId = linkedAuthorId;
+    }
+
+    public String getLinkedAuthorName() {
+        return linkedAuthorName;
+    }
+
+    public void setLinkedAuthorName(String linkedAuthorName) {
+        this.linkedAuthorName = linkedAuthorName;
+    }
 }

@@ -21,6 +21,17 @@ public class NewsEntity extends BaseEntity{
     private String authorId;
     @Column(name = "AUTHOR_NAME")
     private String authorName;
+    @Column(name = "CLICK_COUNT")
+    private Integer clickCount;
+    public Integer getClickCount() {
+        return clickCount;
+    }
+
+    public void setClickCount(Integer clickCount) {
+        this.clickCount = clickCount;
+    }
+
+
 
     public String getTabId() {
         return tabId;
