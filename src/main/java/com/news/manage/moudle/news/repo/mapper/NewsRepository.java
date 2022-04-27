@@ -12,6 +12,7 @@ import java.util.List;
 public interface NewsRepository extends JpaRepository<NewsEntity, String>, JpaSpecificationExecutor<NewsEntity> {
     List<NewsEntity> findAllByOrderByClickCountDesc(Pageable pageable);
     List<NewsEntity> findAllByOrderByCreateTimeDesc(Pageable pageable);
+    NewsEntity findByUuid(String uuid);
 
     @Query(value = "SELECT id FROM NewsEntity ORDER BY RAND() LIMIT :size ",nativeQuery = true)
     List<NewsEntity> findAllByRandom(@Param("size") int size);

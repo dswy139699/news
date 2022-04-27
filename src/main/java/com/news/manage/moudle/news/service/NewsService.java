@@ -82,13 +82,16 @@ public class NewsService {
         }
         NewsEntity newsEntity = null;
         if(StringUtils.isNotEmpty(newsVO.getUuid()) && StatusEnum.DELETED.equals(newsVO.getStatusEnum())){
-            newsEntity = newsRepository.getById(newsVO.getUuid());
+            newsEntity = newsRepository.findByUuid(newsVO.getUuid());
+            if(Objects.isNull(newsEntity)){
+                newsEntity = newsConverter.toNewEntity(newsVO);
+            }
             newsEntity.setStatusEnum(StatusEnum.DELETED);
         } else {
             newsEntity = newsConverter.toNewEntity(newsVO);
         }
         if(StringUtils.isNotEmpty(newsEntity.getTabId())){
-            TabEntity tabEntity = tabRepository.getById(newsEntity.getTabId());
+            TabEntity tabEntity = Optional.ofNullable(tabRepository.findByUuid(newsEntity.getTabId())).orElse(new TabEntity());
             newsEntity.setTabName(tabEntity.getTabName());
         }
         newsRepository.save(newsEntity);
@@ -107,7 +110,10 @@ public class NewsService {
         }
         TabEntity tabEntity = null;
         if(StringUtils.isNotEmpty(tabVO.getUuid()) && StatusEnum.DELETED.equals(tabVO.getStatusEnum())){
-            tabEntity = tabRepository.getById(tabVO.getUuid());
+            tabEntity = tabRepository.findByUuid(tabVO.getUuid());
+            if(Objects.isNull(tabEntity)){
+                tabEntity = newsConverter.toTabEntity(tabVO);
+            }
             tabEntity.setStatusEnum(StatusEnum.DELETED);
         } else {
             tabEntity = newsConverter.toTabEntity(tabVO);
@@ -127,13 +133,16 @@ public class NewsService {
             commentVO.setAuthorName(userVO.getName());
         }
         if(StringUtils.isNotEmpty(commentVO.getLinkedCommentId())){
-            CommentEntity commentEntity = commentRepository.getById(commentVO.getLinkedCommentId());
+            CommentEntity commentEntity = Optional.ofNullable(commentRepository.findByUuid(commentVO.getLinkedCommentId())).orElse(new CommentEntity());
             commentVO.setLinkedAuthorId(commentEntity.getAuthorId());
             commentVO.setLinkedAuthorName(commentEntity.getAuthorName());
         }
         CommentEntity commentEntity = null;
         if(StringUtils.isNotEmpty(commentVO.getUuid()) && StatusEnum.DELETED.equals(commentVO.getStatusEnum())){
-            commentEntity = commentRepository.getById(commentVO.getUuid());
+            commentEntity = commentRepository.findByUuid(commentVO.getUuid());
+            if(Objects.isNull(commentEntity)){
+                commentEntity = newsConverter.toCommentEntity(commentVO);
+            }
             commentEntity.setStatusEnum(StatusEnum.DELETED);
         } else {
             commentEntity = newsConverter.toCommentEntity(commentVO);
@@ -332,8 +341,8 @@ public class NewsService {
         List<CommentVO> commentVOS = newsConverter.toCommentVOList(commentEntities);
         if(!CollectionUtils.isEmpty(commentVOS)){
             commentVOS.forEach(t -> {
-                TabEntity tabEntity = tabRepository.getById(t.getTabId());
-                NewsEntity newsEntity = newsRepository.getById(t.getNewsId());
+                TabEntity tabEntity = Optional.ofNullable(tabRepository.findByUuid(t.getTabId())).orElse(new TabEntity());
+                NewsEntity newsEntity = Optional.ofNullable(newsRepository.findByUuid(t.getNewsId())).orElse(new NewsEntity());
                 t.setTabName(tabEntity.getTabName());
                 t.setTitle(newsEntity.getTitle());
             });
