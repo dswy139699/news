@@ -9,6 +9,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "NEWS_COMMENT")
 public class CommentEntity extends BaseEntity{
+    @Column(name = "TAB_ID")
+    private String tabId;
     @Column(name = "NEWS_ID")
     private String newsId;
     @Column(name = "LINKED_AUTHOR_ID")
@@ -79,4 +81,13 @@ public class CommentEntity extends BaseEntity{
     public void setLinkedAuthorName(String linkedAuthorName) {
         this.linkedAuthorName = linkedAuthorName;
     }
+
+    public String getTabId() {
+        return tabId;
+    }
+
+    public void setTabId(String tabId) {
+        this.tabId = tabId;
+    }
+
 }

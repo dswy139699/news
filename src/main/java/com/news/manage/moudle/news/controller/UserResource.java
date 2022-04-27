@@ -23,7 +23,7 @@ public class UserResource {
     @Resource
     private UserService userService;
 
-    @CheckToken
+//    @CheckToken
     @PostMapping(value = "/manage")
     public ResponseModel<UserVO> userManage(@RequestBody UserVO userVO){
         logger.info("user manage input: " + JSON.toJSONString(userVO));

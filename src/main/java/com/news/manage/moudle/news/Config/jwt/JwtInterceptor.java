@@ -1,9 +1,13 @@
 package com.news.manage.moudle.news.Config.jwt;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.HttpMediaTypeException;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -17,7 +21,7 @@ import java.util.Objects;
 public class JwtInterceptor implements HandlerInterceptor {
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws HttpStatusCodeException {
         //如果不是映射到方法直接通过
         if (!(handler instanceof HandlerMethod)) {
             return true;
@@ -31,14 +35,23 @@ public class JwtInterceptor implements HandlerInterceptor {
 
                 //从 http 请求头中取出 token
                 String token = request.getHeader("token");
-                System.out.println("此处测试是否拿到了token：" + token);
+//                System.out.println("此处测试是否拿到了token：" + token);
 
-                if (token == null) {
-                    throw new RuntimeException("无 token ，请重新登陆");
+                try {
+                    if (token == null) {
+
+                        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                        return false;
+                    }
+                    JwtUtil.checkSign(token);
+                } catch (Exception e){
+//                    throw  new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                    return false;
                 }
-                JwtUtil.checkSign(token);
+
                 Authentication authentication = null;
-                if(Objects.nonNull(token) && !"".equals(token) && JwtUtil.checkSign(token)){
+                if(Objects.nonNull(token) && !"".equals(token)){
                     authentication = generateAuthentication(token);
                 }
                 if(Objects.nonNull(authentication)){

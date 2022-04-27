@@ -20,6 +20,8 @@ public class UserEntity extends BaseEntity{
     private String exp;
     @Column(name = "PHOTO_ADDRESS")
     private String photoAddress;
+    @Column(name = "MOBILE_PHONE")
+    private String mobilePhone;
 
     public String getName() {
         return name;
@@ -67,5 +69,13 @@ public class UserEntity extends BaseEntity{
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getMobilePhone() {
+        return mobilePhone;
+    }
+
+    public void setMobilePhone(String mobilePhone) {
+        this.mobilePhone = mobilePhone;
     }
 }

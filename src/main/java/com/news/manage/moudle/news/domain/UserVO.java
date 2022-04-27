@@ -9,6 +9,7 @@ public class UserVO extends BaseVO{
     private String level;
     private String exp;
     private String photoAddress;
+    private String mobilePhone;
 
 
     public String getUserId() {
@@ -59,4 +60,11 @@ public class UserVO extends BaseVO{
         this.photoAddress = photoAddress;
     }
 
+    public String getMobilePhone() {
+        return mobilePhone;
+    }
+
+    public void setMobilePhone(String mobilePhone) {
+        this.mobilePhone = mobilePhone;
+    }
 }

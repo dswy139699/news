@@ -296,6 +296,10 @@ public class NewsService {
             List<Predicate> pList = new ArrayList<>();
             Predicate predicate1 = cb.isNotNull(root.get(UUID));
             pList.add(predicate1);
+            if(StringUtils.isNotEmpty(commentVO.getTabId())){
+                Predicate predicate = cb.equal(root.get(TAB_ID), commentVO.getTabId());
+                pList.add(predicate);
+            }
             if(StringUtils.isNotEmpty(commentVO.getNewsId())){
                 Predicate predicate = cb.equal(root.get(NEW_ID), commentVO.getNewsId());
                 pList.add(predicate);
@@ -326,6 +330,14 @@ public class NewsService {
     public ResponseModel<List<CommentVO>> queryCommentVOList(CommentVO commentVO){
         List<CommentEntity> commentEntities = this.queryCommentList(commentVO);
         List<CommentVO> commentVOS = newsConverter.toCommentVOList(commentEntities);
+        if(!CollectionUtils.isEmpty(commentVOS)){
+            commentVOS.forEach(t -> {
+                TabEntity tabEntity = tabRepository.getById(t.getTabId());
+                NewsEntity newsEntity = newsRepository.getById(t.getNewsId());
+                t.setTabName(tabEntity.getTabName());
+                t.setTitle(newsEntity.getTitle());
+            });
+        }
         return new ResponseModel<>(ErrorEnum.SUCCESS.getCode(), ErrorEnum.SUCCESS.getMsg(), commentVOS);
     }
 

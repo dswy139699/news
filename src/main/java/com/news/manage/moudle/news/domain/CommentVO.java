@@ -1,9 +1,13 @@
 package com.news.manage.moudle.news.domain;
 
+import javax.persistence.Column;
+
 public class CommentVO extends BaseVO{
 
-
+    private String tabId;
+    private String tabName;
     private String newsId;
+    private String title;
     private String linkedCommentId;
     private String linkedAuthorId;
     private String linkedAuthorName;
@@ -65,5 +69,29 @@ public class CommentVO extends BaseVO{
 
     public void setLinkedAuthorName(String linkedAuthorName) {
         this.linkedAuthorName = linkedAuthorName;
+    }
+
+    public String getTabId() {
+        return tabId;
+    }
+
+    public void setTabId(String tabId) {
+        this.tabId = tabId;
+    }
+
+    public String getTabName() {
+        return tabName;
+    }
+
+    public void setTabName(String tabName) {
+        this.tabName = tabName;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }
