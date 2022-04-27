@@ -17,6 +17,7 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -74,13 +75,17 @@ public class UserService {
      * @return
      */
     public ResponseModel<UserVO> createOrUpdateUser(UserVO userVO){
-        if(Objects.isNull(userVO.getUuid())){
+        if(StringUtils.isEmpty(userVO.getUuid()) && StringUtils.isNotEmpty(userVO.getUserId())){
             UserEntity userEntityByUserId = userRepository.findUserEntityByUserId(userVO.getUserId());
             if(Objects.nonNull(userEntityByUserId)){
                 return new ResponseModel<UserVO>(ErrorEnum.USER_EXIST.getCode(), ErrorEnum.USER_EXIST.getMsg(), null);
             }
         }
         UserEntity userEntity = newsConverter.toUserEntity(userVO);
+        if(StringUtils.isNotEmpty(userVO.getUuid()) && StringUtils.isEmpty(userVO.getPassWord())){
+            UserEntity userEntity1 = Optional.ofNullable(userRepository.findUserEntityByUserId(userVO.getUuid())).orElse(new UserEntity());
+            userEntity.setPassWord(userEntity1.getPassWord());
+        }
         userRepository.save(userEntity);
         UserVO toUserVO = newsConverter.toUserVO(userEntity);
         return new ResponseModel<UserVO>(ErrorEnum.SUCCESS.getCode(), ErrorEnum.SUCCESS.getMsg(), toUserVO);
