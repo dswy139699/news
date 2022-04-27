@@ -1,35 +1,20 @@
-package com.news.manage.moudle.news.repo.dao;
+package com.news.manage.moudle.news.domain;
 
+import com.news.manage.moudle.news.enums.StatusEnum;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+public class NewsVO extends BaseVO{
 
-
-@Entity
-@Table(name = "NEWS_BODY")
-public class NewsEntity extends BaseEntity{
-    @Column(name = "TAB_ID")
+    //栏目id
     private String tabId;
-    @Column(name = "TAB_NAME")
+    //栏目名称
     private String tabName;
-    @Column(name = "TITLE")
+    //
     private String title;
-    @Column(name = "CONTENT")
     private String content;
-    @Column(name = "AUTHOR_ID")
+    //作者id
     private String authorId;
-    @Column(name = "AUTHOR_NAME")
+    //
     private String authorName;
-    @Column(name = "CLICK_COUNT")
-    private Integer clickCount;
-    public Integer getClickCount() {
-        return clickCount;
-    }
-
-    public void setClickCount(Integer clickCount) {
-        this.clickCount = clickCount;
-    }
 
 
 
@@ -80,4 +65,5 @@ public class NewsEntity extends BaseEntity{
     public void setAuthorName(String authorName) {
         this.authorName = authorName;
     }
+
 }

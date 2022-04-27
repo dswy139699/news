@@ -1,16 +1,14 @@
 package com.news.manage.moudle.news.repo.dao;
 
 
-import lombok.Getter;
-import lombok.Setter;
+import com.news.manage.moudle.news.enums.StatusEnum;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-@Getter
-@Setter
+
 @MappedSuperclass
 public class BaseEntity implements Serializable {
 
@@ -25,6 +23,9 @@ public class BaseEntity implements Serializable {
     @Column(name = "UPDATE_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateTime;
+    @Column(name = "STATUS_ENUM")
+    @Enumerated(EnumType.STRING)
+    private StatusEnum statusEnum;
 
     @PrePersist
     public void generateTime(){
@@ -38,5 +39,37 @@ public class BaseEntity implements Serializable {
         if(this.updateTime == null){
             this.updateTime = new Date();
         }
+    }
+
+    public void setCreateTime(Date createTime){
+        this.createTime = createTime;
+    }
+    public Date getCreateTime(){
+        return this.createTime;
+    }
+
+
+    public void setUpdateTime(Date updateTime){
+        this.updateTime = updateTime;
+    }
+    public Date getUpdateTime(){
+        return this.updateTime;
+    }
+
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public StatusEnum getStatusEnum() {
+        return statusEnum;
+    }
+
+    public void setStatusEnum(StatusEnum statusEnum) {
+        this.statusEnum = statusEnum;
     }
 }
