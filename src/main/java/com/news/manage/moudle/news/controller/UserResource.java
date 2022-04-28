@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.news.manage.moudle.news.Config.jwt.CheckToken;
 import com.news.manage.moudle.news.domain.ResponseModel;
 import com.news.manage.moudle.news.domain.UserVO;
+import com.news.manage.moudle.news.enums.ErrorEnum;
 import com.news.manage.moudle.news.service.UserService;
 import org.apache.log4j.Logger;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,5 +38,13 @@ public class UserResource {
         ResponseModel<List<UserVO>> listResponseModel = userService.queryUserVOList(userVO);
         logger.info("user query response: " + JSON.toJSONString(listResponseModel));
         return listResponseModel;
+    }
+
+    @PostMapping(value = "/queryByToken")
+    public ResponseModel<UserVO> queryUserByToken(){
+//        logger.info("user query input: " + JSON.toJSONString(userVO));
+        UserVO userVO = userService.queryUserByToken();
+        logger.info("user query by token response: " + JSON.toJSONString(userVO));
+        return new ResponseModel<>(ErrorEnum.SUCCESS.getCode(), ErrorEnum.SUCCESS.getMsg(), userVO);
     }
 }

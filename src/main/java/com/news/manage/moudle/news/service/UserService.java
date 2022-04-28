@@ -124,4 +124,12 @@ public class UserService {
         List<UserVO> userVOS = newsConverter.toUserVOList(userEntities);
         return new ResponseModel<>(ErrorEnum.SUCCESS.getCode(), ErrorEnum.SUCCESS.getMsg(), userVOS);
     }
+
+//    public ResponseModel<List<UserVO>> queryUserByToken(){
+//        String userId = SecurityUtil.getUserId();
+//        UserVO userVO = new UserVO();
+//        userVO.setUserId(userId);
+//        ResponseModel<List<UserVO>> listResponseModel = this.queryUserVOList(userVO);
+//        return listResponseModel;
+//    }
 }

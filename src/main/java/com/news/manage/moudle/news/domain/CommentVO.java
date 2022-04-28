@@ -1,6 +1,7 @@
 package com.news.manage.moudle.news.domain;
 
 import javax.persistence.Column;
+import javax.xml.transform.sax.SAXResult;
 
 public class CommentVO extends BaseVO{
 
@@ -11,9 +12,11 @@ public class CommentVO extends BaseVO{
     private String linkedCommentId;
     private String linkedAuthorId;
     private String linkedAuthorName;
+    private String linkedPhotoAddress;
     private String commentBody;
     private String authorId;
     private String authorName;
+    private String photoAddress;
 
     public String getNewsId() {
         return newsId;
@@ -93,5 +96,21 @@ public class CommentVO extends BaseVO{
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getLinkedPhotoAddress() {
+        return linkedPhotoAddress;
+    }
+
+    public void setLinkedPhotoAddress(String linkedPhotoAddress) {
+        this.linkedPhotoAddress = linkedPhotoAddress;
+    }
+
+    public String getPhotoAddress() {
+        return photoAddress;
+    }
+
+    public void setPhotoAddress(String photoAddress) {
+        this.photoAddress = photoAddress;
     }
 }

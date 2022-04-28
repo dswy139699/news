@@ -75,11 +75,11 @@ public class NewsService {
      * @param newsVO
      */
     public NewsVO manageNews(NewsVO newsVO){
-        UserVO userVO = userService.queryUserByToken();
-        if(Objects.nonNull(userVO)) {
-            newsVO.setAuthorId(userVO.getUserId());
-            newsVO.setAuthorName(userVO.getName());
-        }
+//        UserVO userVO = userService.queryUserByToken();
+//        if(Objects.nonNull(userVO)) {
+//            newsVO.setAuthorId(userVO.getUserId());
+//            newsVO.setAuthorName(userVO.getName());
+//        }
         NewsEntity newsEntity = null;
         if(StringUtils.isNotEmpty(newsVO.getUuid()) && StatusEnum.DELETED.equals(newsVO.getStatusEnum())){
             newsEntity = newsRepository.findByUuid(newsVO.getUuid());
@@ -343,8 +343,14 @@ public class NewsService {
             commentVOS.forEach(t -> {
                 TabEntity tabEntity = Optional.ofNullable(tabRepository.findByUuid(t.getTabId())).orElse(new TabEntity());
                 NewsEntity newsEntity = Optional.ofNullable(newsRepository.findByUuid(t.getNewsId())).orElse(new NewsEntity());
+                UserVO authorVO = Optional.ofNullable(userService.queryUserById(t.getAuthorId())).orElse(new UserVO());
+                UserVO linkedAuthorId = Optional.ofNullable(userService.queryUserById(t.getLinkedAuthorId())).orElse(new UserVO());
                 t.setTabName(tabEntity.getTabName());
                 t.setTitle(newsEntity.getTitle());
+                t.setAuthorName(authorVO.getName());
+                t.setPhotoAddress(authorVO.getPhotoAddress());
+                t.setLinkedAuthorName(linkedAuthorId.getName());
+                t.setLinkedPhotoAddress(linkedAuthorId.getPhotoAddress());
             });
         }
         return new ResponseModel<>(ErrorEnum.SUCCESS.getCode(), ErrorEnum.SUCCESS.getMsg(), commentVOS);
