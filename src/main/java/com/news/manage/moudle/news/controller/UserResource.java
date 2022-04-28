@@ -40,6 +40,7 @@ public class UserResource {
         return listResponseModel;
     }
 
+    @CheckToken
     @PostMapping(value = "/queryByToken")
     public ResponseModel<UserVO> queryUserByToken(){
 //        logger.info("user query input: " + JSON.toJSONString(userVO));
